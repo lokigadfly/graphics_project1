@@ -114,10 +114,21 @@ int main(int argc, char* argv[])
     Shader sphereShader("/Users/gadflyloki/chengxu/test/test/sphereShader.vs",
                         "/Users/gadflyloki/chengxu/test/test/sphereShader.fs");
     
-    float televertices[] = {0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
+    float televertices[] = {
+        0.0f, 0.0f, 1.0f,-1.0f,0.0f,0.0f,
+        0.0f, 1.0f, 0.0f,-1.0f,0.0f,0.0f,
+        0.0f,0.0f, 0.0f,-1.0f,0.0f,0.0f,
+        0.0f, 0.0f, 0.0f,0.0f,0.0f,-1.0f,
+        0.0f, 1.0f,0.0f,0.0f,0.0f,-1.0f,
+        1.0f, 0.0f, 0.0f,0.0f,0.0f,-1.0f,
+        0.0f, 0.0f, 1.0f,0.0f,-1.0f,0.0f,
+        0.0f, 0.0f, 0.0f,0.0f,-1.0f,0.0f,
+        1.0f, 0.0f, 0.0f,0.0f,-1.0f,0.0f,
+        0.0f,1.0f,0.0f,1.0f,1.0f,1.0f,
+        1.0f,0.0f,0.0f,1.0f,1.0f,1.0f,
+        0.0f,0.0f,1.0f,1.0f,1.0f,1.0f
+        
+    };
     float vertices[] = {
         -0.5f, -0.5f, -0.5f, 0.0f,  0.0f,  -1.0f, 0.5f,  -0.5f, -0.5f,
         0.0f,  0.0f,  -1.0f, 0.5f,  0.5f,  -0.5f, 0.0f,  0.0f,  -1.0f,
@@ -197,7 +208,7 @@ int main(int argc, char* argv[])
             GLfloat x = sin(glm::radians(a)) * cos(glm::radians(b));
             GLfloat y = sin(glm::radians(a)) * sin(glm::radians(b));
             GLfloat z = cos(glm::radians(a));
-            std::cout << x << " " << y << " " << z << std::endl;
+//            std::cout << x << " " << y << " " << z << std::endl;
             vertices1.push_back(x);
             vertices1.push_back(y);
             vertices1.push_back(z);
@@ -237,6 +248,11 @@ int main(int argc, char* argv[])
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
                           (void*)0);
     glEnableVertexAttribArray(0);
+    
+    
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
+                          (void*)0);
+    glEnableVertexAttribArray(1);
     //    glBindBuffer(GL_ARRAY_BUFFER, 0);
     
     //    ShowVec(vertices);
@@ -249,9 +265,12 @@ int main(int argc, char* argv[])
     glBindBuffer(GL_ARRAY_BUFFER, tvbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(televertices), televertices,
                  GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float),
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
                           (void*)0);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float),
+                          (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
     // teleshaderend
     glewExperimental = GL_TRUE;
     
@@ -285,7 +304,9 @@ int main(int argc, char* argv[])
         
         // world transformation
         glm::mat4 model;
-        
+        model = glm::mat4();
+        model = glm::translate(model, glm::vec3(-2.0f,0.0f,0.0f));
+        model = glm::scale(model, glm::vec3(1.0f));  // a
         lightingShader.setMat4("model", model);
         
         // render the cube
@@ -302,30 +323,34 @@ int main(int argc, char* argv[])
         model = glm::translate(model, glm::vec3(0.0f));
         model = glm::scale(model, glm::vec3(1.0f));  // a smaller cube
         lampShader.setMat4("model", model);
-        glBindVertexArray(lightVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+//        glBindVertexArray(lightVAO);
+//        glDrawArrays(GL_TRIANGLES, 0, 36);
         
         // drawTri();
         //        drawSphere();
         
-        glm::vec3 spherePos(0.0f, 1.0f, 0.0f);
-        sphereShader.use();
-        sphereShader.setMat4("projection", projection);
-        sphereShader.setMat4("view", view);
+        glm::vec3 spherePos(2.0f, 0.0f, 0.0f);
+        lightingShader.use();
+        lightingShader.setMat4("projection", projection);
+        lightingShader.setMat4("view", view);
         model = glm::mat4();
         model = glm::translate(model, spherePos);
         model = glm::scale(model, glm::vec3(1.0f));  // a smaller cube
-        sphereShader.setMat4("model", model);
+        lightingShader.setMat4("model", model);
         glBindVertexArray(svao);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         glDrawElements(GL_TRIANGLE_STRIP, 6 * 40 * 40, GL_UNSIGNED_INT, 0);
         
         // simianti---begin
-        //        spherePos=glm::vec3(0.0f, -1.0f, 0.0f);
-        //        sphereShader.use();
-        //        model = glm::scale(model, glm::vec3(1.0f));
-        //        glBindVertexArray(tvao);
-        //        glDrawArrays(GL_TRIANGLES, 0, 36);
+                spherePos=glm::vec3(0.0f, 0.0f, 0.0f);
+                lightingShader.use();
+                model = glm::mat4();
+                model = glm::scale(model, glm::vec3(1.0f));
+                model = glm::translate(model, spherePos);
+                model = glm::scale(model, glm::vec3(1.0f));
+                lightingShader.setMat4("model", model);
+                glBindVertexArray(tvao);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
         // simianti---end
         //
         glfwSwapBuffers(window);
