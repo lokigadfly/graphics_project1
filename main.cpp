@@ -107,10 +107,10 @@ int main(int argc, char* argv[])
     // build and compile our shader zprogram
     // ------------------------------------
     Shader lightingShader(
-                          "/Users/gadflyloki/chengxu/test/test/2.2.basic_lighting.vs",
-                          "/Users/gadflyloki/chengxu/test/test/2.2.basic_lighting.fs");
-    Shader lampShader("/Users/gadflyloki/chengxu/test/test/2.2.lamp.vs",
-                      "/Users/gadflyloki/chengxu/test/test2.2.lamp.fs");
+                          "/Users/gadflyloki/chengxu/test/test/lighting.vs",
+                          "/Users/gadflyloki/chengxu/test/test/lighting.fs");
+    Shader lampShader("/Users/gadflyloki/chengxu/test/test/lamp.vs",
+                      "/Users/gadflyloki/chengxu/test/test/lamp.fs");
     Shader sphereShader("/Users/gadflyloki/chengxu/test/test/sphereShader.vs",
                         "/Users/gadflyloki/chengxu/test/test/sphereShader.fs");
     
@@ -380,6 +380,10 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(LEFT, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        camera.ProcessKeyboard(SMOOTHLEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        camera.ProcessKeyboard(SMOOTHRIGHT, deltaTime);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback

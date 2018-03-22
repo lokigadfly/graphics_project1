@@ -9,7 +9,9 @@ enum Camera_Movement {
     FORWARD,
     BACKWARD,
     LEFT,
-    RIGHT
+    RIGHT,
+    SMOOTHLEFT,
+    SMOOTHRIGHT
 };
 
 // Default camera values
@@ -73,13 +75,18 @@ public:
             Position -= Front * velocity;
         if (direction == LEFT){
             Position-= glm::cross(Front,Up)*velocity;  // circle rotate
-            //Position -= Right * velocity;
             Front = -Position ;
         }
-        if (direction == RIGHT)
+        if (direction == SMOOTHLEFT){
+            Position -= Right * velocity;
+        }
+        if (direction == RIGHT){
             Position+= glm::cross(Front,Up)*velocity; // circle rotate
-//            Position += Right * velocity;
             Front = -Position ;
+        }
+        if (direction == SMOOTHRIGHT){
+            Position += Right * velocity;
+        }
     }
 
     // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
